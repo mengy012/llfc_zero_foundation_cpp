@@ -9,5 +9,6 @@ namespace tang
 
 extern int int_v;
 extern std::string_view s_v;
+extern const double cb;
 
 } // namespace tang

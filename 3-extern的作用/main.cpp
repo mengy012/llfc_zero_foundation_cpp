@@ -5,4 +5,5 @@
 int main()
 {
     std::cout << tang::int_v << '\n' << tang::s_v << std::endl;
+    std::cout << tang::cb << std::endl;
 }
