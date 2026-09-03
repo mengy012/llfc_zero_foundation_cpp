@@ -1,0 +1,25 @@
+#include <iostream>
+#include <string>
+#include <windows.h>
+#include <algorithm>
+#include <cstdint>
+#include <cctype>
+#include <regex>
+
+int main()
+{
+    SetConsoleOutputCP(CP_UTF8);
+
+    std::string text = "The quick brown fox jumps over the lazy dog.";
+    std::regex pattern(R"(\b\w{5}\b)"); // 匹配所有5个字母的单词
+
+    std::sregex_iterator it(text.begin(), text.end(), pattern);
+    std::sregex_iterator end;
+
+    std::cout << "5个字母的单词有:" << std::endl;
+    while (it != end)
+    {
+        std::cout << (*it).str() << std::endl;
+        ++it;
+    }
+}

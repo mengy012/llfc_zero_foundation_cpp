@@ -1,0 +1,123 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <map>
+#include <algorithm>
+#include <utility>
+#include <cctype>
+#include <windows.h>
+#include <vector>
+
+// 用户输入
+std::string user_input()
+{
+    std::string text;
+    std::getline(std::cin, text);
+    return text;
+}
+
+class Parse_word_sys
+{
+  private:
+    // 用户输入文本
+    std::string usr_input_{};
+
+    // key: 单词，value：出现次数
+    std::map<std::string, size_t> kv_;
+
+    // 最长单词数组，单词长度
+    std::vector<std::string> longest_words_;
+    size_t longest_word_lenth_{};
+
+  public:
+    Parse_word_sys(/* args */);
+    ~Parse_word_sys();
+
+    // 接收用户文本输入，eg：The quick brown fox jumps over the lazy dog.
+    void user_input()
+    {
+        // std::string text;
+        // std::getline(std::cin, text);
+
+        std::string text{"Hello, world! Hello C++.\nThis is a simple text analyzer. Analyzing text is fun."};
+
+        usr_input_ = std::move(text);
+    }
+
+    // 处理用户输入文本，添加到map中
+    void progress_input()
+    {
+        // 1. 去除所有标点符号
+        usr_input_.erase(std::remove_if(usr_input_.begin(), usr_input_.end(), [](unsigned char c) { return std::ispunct(c); }), usr_input_.end());
+
+        // 2. 全部转为小写
+        std::transform(usr_input_.begin(), usr_input_.end(), usr_input_.begin(), [](unsigned char c) { return tolower(c); });
+
+        // 3. 构造字符串流
+        std::istringstream iss(usr_input_);
+
+        // 4.开始处理
+        std::string word;
+        while (iss >> word)
+        {
+            if (word.size() > longest_word_lenth_)
+            {
+                longest_word_lenth_ = word.size();
+            }
+            kv_[word]++;
+        }
+    }
+
+    // 打印单词出现次数结果，和单词总数
+    void print_result()
+    {
+        // 单词总数
+        size_t total{};
+        for (const auto& [word, count] : kv_)
+        {
+            total += count;
+            if (word.size() == longest_word_lenth_)
+            {
+                longest_words_.emplace_back(word);
+            }
+            std::cout << word << ": " << count << std::endl;
+        }
+        std::cout << "单词总数: " << total << std::endl;
+        std::cout << "最长的单词：";
+        for (const auto& s : longest_words_)
+        {
+            std::cout << s << ' ';
+        }
+        std::cout << std::endl;
+    }
+
+    // 查询某个单词出现次数
+    void print_find_word_count(std::string k)
+    {
+        auto it = kv_.find(k);
+        if (it != kv_.end())
+        {
+            std::cout << it->first << "出现 " << it->second << "次" << std::endl;
+        }
+        else
+        {
+            std::cout << k << " 没找到" << std::endl;
+        }
+    }
+};
+
+Parse_word_sys::Parse_word_sys(/* args */)
+{
+    SetConsoleOutputCP(CP_UTF8);
+}
+
+Parse_word_sys::~Parse_word_sys() {}
+
+int main()
+{
+    Parse_word_sys sys;
+    sys.user_input();
+    sys.progress_input();
+    sys.print_result();
+    sys.print_find_word_count("is");
+}
