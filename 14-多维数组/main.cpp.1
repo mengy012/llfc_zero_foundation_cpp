@@ -1,0 +1,121 @@
+#include <iostream>
+#include <utility>
+#include <algorithm>
+
+int main()
+{
+
+    // {
+    //     // 大小为3的数组，每个元素是大小为4的数组
+    //     int ia[3][4]{1,2,3,4,5,6,7,8,9,10,11,12};
+
+    //     int* begin = (int*)ia;
+    //     int* end = begin + 12;
+
+    //     int i{};
+    //     for (; begin != end; ++begin, ++i)
+    //     {
+    //         std::cout << *begin << std::endl;
+    //     }
+    //     std::cout << i << std::endl;
+    // }
+
+    // {
+    //     // 大小为3的数组，每个元素是大小为4的数组
+    //     // 初始化每一行的首元素
+    //     int ia[3][4] = {{0}, {4}, {8}};
+    //     int* begin = (int*)ia;
+    //     int* end = begin + 12;
+
+    //     int i{};
+    //     for (; begin != end; ++begin, ++i)
+    //     {
+    //         std::cout << *begin << ' ';
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+    // {
+    //     // 大小为3的数组，每个元素是大小为4的数组
+    //     // 值初始化第一i行
+    //     int ia[3][4] = {0, 3, 5, 9};
+    //     int* begin = (int*)ia;
+    //     int* end = begin + 12;
+
+    //     int i{};
+    //     for (; begin != end; ++begin, ++i)
+    //     {
+    //         std::cout << *begin << ' ';
+    //     }
+
+    //     std::cout << std::endl;
+    // }
+
+    // {
+    //     int ia[3][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+    //     int arr[1][1][1] = {{{1}}};
+    //     // 用arr的首元素为ia的最后一个元素赋值
+    //     ia[2][3] = arr[0][0][0];
+    //     // row是一个4维数组的引用,将row绑定到ia的第二个元素(4维数组)上
+    //     int (&row)[4] = ia[1];
+    //     for (auto v : row)
+    //     {
+    //         std::cout << v << std::endl;
+    //     }
+    // }
+
+    //     {
+    //         constexpr int v{9};
+    //         int arr[v]{};
+    //     }
+
+    {
+        // ia数组
+        int ia[3][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+        // 输出ia中每个元素的值,每个内存数组各占一行
+        // p指向含有4个整数的数组
+        for (auto p = ia; p != ia + 3; ++p)
+        {
+            // q指向4个整数的数组的首元素
+            for (auto q = *p; q != *p + 4; ++q)
+            {
+                std::cout << *q << ' ';
+            }
+            std::cout << std::endl;
+        }
+    }
+    {
+        // ia数组
+        int ia[3][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+
+        // p指向ia的第一个数组
+        for (auto p = std::begin(ia); p != std::end(ia); ++p)
+        {
+            // q指向内存数组的首元素
+            for (auto q = std::begin(*p); q != std::end(*p); ++q)
+            {
+                // 输出q所指的整数值
+                std::cout << *q << ' ';
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    {
+        // ia数组
+        int ia[3][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+        // 新标准下类型别名的声明
+        using int_array = int[4];
+        // 使用typedef 声明类型的别名
+        typedef int int_array_t[4];
+
+        for (int_array* p = ia; p != ia + 3; ++p)
+        {
+            for (int* q = *p; q != *p + 4; ++q)
+            {
+                std::cout << *q << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+}

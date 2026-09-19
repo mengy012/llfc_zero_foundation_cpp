@@ -1,0 +1,60 @@
+#include <iostream>
+
+int main()
+{
+    constexpr int ROW = 2;
+    constexpr int COL = 3;
+    int matrix1[ROW][COL];
+    int matrix2[ROW][COL];
+    int sum[ROW][COL];
+
+    // 输入第一个矩阵
+    // std::cout << "请输入第一个2x3矩阵的元素(共6个整数):" << std::endl;
+    int val1{};
+    for (int i = 0; i < ROW; ++i)
+    {
+        for (int j = 0; j < COL; ++j)
+        {
+            // 在此输入元素
+            matrix1[i][j] = ++val1;
+        }
+    }
+
+    // 输入第二个矩阵
+    // std::cout << "请输入第二个2x3矩阵的元素(共6个整数):" << std::endl;
+    int val2{7};
+
+    for (int i = 0; i < ROW; ++i)
+    {
+        for (int j = 0; j < COL; ++j)
+        {
+            // 在此输入元素
+            matrix2[i][j] = --val2;
+        }
+    }
+
+    // 计算两个矩阵的和
+    // 在此实现加法逻辑
+    for (int i = 0; i < ROW; ++i)
+    {
+        for (int j = 0; j < COL; ++j)
+        {
+            // 在此输入元素
+            sum[i][j] = matrix1[i][j] + matrix2[i][j];
+        }
+    }
+
+    // 输出结果矩阵
+    // std::cout << "两个矩阵的和为:" << std::endl;
+    for (int i = 0; i < ROW; ++i)
+    {
+        for (int j = 0; j < COL; ++j)
+        {
+            // 在此输出sum[i][j]
+            std::cout << sum[i][j] << ' ';
+        }
+        std::cout << std::endl;
+    }
+
+    return 0;
+}
