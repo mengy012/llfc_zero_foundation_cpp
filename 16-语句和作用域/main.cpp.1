@@ -1,0 +1,539 @@
+// #include <iostream>
+
+// int main()
+// {
+//     int a = 5;      // 赋值表达式语句
+//     a = a + 10;     // 赋值表达式语句
+//     std::cout << a; // 函数调用表达式语句
+//     return 0;       // return 表达式语句
+// }
+
+// #include <iostream>
+
+// // 函数声明
+// int add(int x, int y);
+
+// int main()
+// {
+//     int result = add(3, 4); // 调用函数
+//     std::cout << "Result: " << result;
+//     return 0;
+// }
+
+// // 函数定义
+// int add(int x, int y)
+// {
+//     return x + y;
+// }
+
+// #include <iostream>
+
+// // 全局变量
+// int globalVar = 10;
+
+// void display()
+// {
+//     // 局部变量
+//     int localVar = 5;
+//     std::cout << "Inside display() - globalVar: " << globalVar << ", localVar: " << localVar << std::endl;
+// }
+
+// int main()
+// {
+//     std::cout << "In main() - globalVar: " << globalVar << std::endl;
+//     // 局部变量
+//     int mainVar = 20;
+//     std::cout << "In main() - mainVar: " << mainVar << std::endl;
+
+//     display();
+
+//     // 尝试访问 display() 中的局部变量（将导致编译错误）
+//     // std::cout << localVar; // 错误：未定义标识符
+
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     int x = 10;
+//     std::cout << "x before block: " << x << std::endl;
+
+//     {
+//         // 新的代码块
+//         int x = 20; // 局部变量 x，隐藏外部的 x
+//         std::cout << "x inside block: " << x << std::endl;
+//     }
+
+//     std::cout << "x after block: " << x << std::endl; // 访问外部的 x
+
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     int number;
+//     std::cout << "Enter a number: ";
+//     std::cin >> number;
+
+//     if (number > 0)
+//     {
+//         std::cout << "The number is positive." << std::endl;
+//     }
+
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     int number;
+//     std::cout << "Enter a number: ";
+//     std::cin >> number;
+
+//     if (number % 2 == 0)
+//     {
+//         std::cout << number << " is even." << std::endl;
+//     }
+//     else
+//     {
+//         std::cout << number << " is odd." << std::endl;
+//     }
+
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     int score;
+//     std::cout << "Enter your score (0-100): ";
+//     std::cin >> score;
+
+//     if (score >= 90)
+//     {
+//         std::cout << "Grade: A" << std::endl;
+//     }
+//     else if (score >= 80)
+//     {
+//         std::cout << "Grade: B" << std::endl;
+//     }
+//     else if (score >= 70)
+//     {
+//         std::cout << "Grade: C" << std::endl;
+//     }
+//     else if (score >= 60)
+//     {
+//         std::cout << "Grade: D" << std::endl;
+//     }
+//     else
+//     {
+//         std::cout << "Grade: F" << std::endl;
+//     }
+
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     char grade;
+//     std::cout << "Enter your grade (A, B, C, D, F): ";
+//     std::cin >> grade;
+
+//     switch (grade)
+//     {
+//     case 'A':
+//         std::cout << "Excellent!" << std::endl;
+//         break;
+//     case 'B':
+//         int a{};
+//         std::cout << "Good!" << std::endl;
+//         break;
+//     case 'C':
+//         std::cout << "Fair!" << std::endl;
+//         break;
+//     case 'D':
+//         std::cout << "Poor!" << std::endl;
+//         break;
+//     case 'F':
+//         std::cout << "Fail!" << std::endl;
+//         break;
+//     default:
+//         std::cout << "Invalid grade." << std::endl;
+//     }
+
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     std::cout << "Counting from 1 to 5:" << std::endl;
+
+//     for (int i = 1; i <= 5; ++i)
+//     {
+//         std::cout << i << " ";
+//     }
+
+//     std::cout << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     int count = 1;
+//     std::cout << "Counting from 1 to 5 using while loop:" << std::endl;
+
+//     while (count <= 5)
+//     {
+//         std::cout << count << " ";
+//         ++count;
+//     }
+
+//     std::cout << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     int count = 1;
+//     std::cout << "Counting from 1 to 5 using do-while loop:" << std::endl;
+
+//     do
+//     {
+//         std::cout << count << " ";
+//         ++count;
+//     } while (count <= 5);
+
+//     std::cout << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     for (int i = 1; i <= 3; ++i)
+//     {
+//         std::cout << "Outer loop iteration " << i << ":" << std::endl;
+//         for (int j = 1; j <= 2; ++j)
+//         {
+//             std::cout << "  Inner loop iteration " << j << std::endl;
+//         }
+//     }
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     for (int i = 1; i <= 10; ++i)
+//     {
+//         if (i == 5)
+//         {
+//             break; // 结束循环
+//         }
+//         std::cout << i << " ";
+//     }
+//     std::cout << "\nLoop exited when i == 5." << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     std::cout << "Even numbers between 1 and 10:" << std::endl;
+//     for (int i = 1; i <= 10; ++i)
+//     {
+//         if (i % 2 != 0)
+//         {
+//             continue; // 跳过奇数
+//         }
+//         std::cout << i << " ";
+//     }
+//     std::cout << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+
+// // 函数，返回两个数中的较大者
+// int max(int a, int b)
+// {
+//     if (a > b)
+//     {
+//         return a; // 返回 a，退出函数
+//     }
+//     return b; // 返回 b，退出函数
+// }
+
+// int main()
+// {
+//     int x = 10, y = 20;
+//     std::cout << "The maximum of " << x << " and " << y << " is " << max(x, y) << "." << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+
+// int main()
+// {
+//     int number;
+//     std::cout << "Enter a positive number (negative to quit): ";
+//     std::cin >> number;
+
+//     if (number < 0)
+//     {
+//         goto end; // 跳转到 end 标签，结束程序
+//     }
+
+//     std::cout << "You entered: " << number << std::endl;
+
+// end:
+//     std::cout << "Program ended." << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+// #include <stdexcept>
+
+// // 函数，计算除法
+// double divide(double numerator, double denominator)
+// {
+//     if (denominator == 0)
+//     {
+//         throw std::invalid_argument("Denominator cannot be zero."); // 抛出异常
+//     }
+//     return numerator / denominator;
+// }
+
+// int main()
+// {
+//     double num, denom;
+
+//     std::cout << "Enter numerator: ";
+//     std::cin >> num;
+//     std::cout << "Enter denominator: ";
+//     std::cin >> denom;
+
+//     try
+//     {
+//         double result = divide(num, denom);
+//         std::cout << "Result: " << result << std::endl;
+//     }
+//     catch (std::invalid_argument& e)
+//     { // 捕获 std::invalid_argument 异常
+//         std::cerr << "Error: " << e.what() << std::endl;
+//     }
+
+//     std::cout << "Program continues after try-catch." << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+// #include <stdexcept>
+
+// int main()
+// {
+//     try
+//     {
+//         // 模拟不同类型的异常
+//         int choice;
+//         std::cout << "Choose exception to throw (1: bad_alloc, 2: invalid_argument): ";
+//         std::cin >> choice;
+
+//         if (choice == 1)
+//         {
+//             throw std::bad_alloc();
+//         }
+//         else if (choice == 2)
+//         {
+//             throw std::invalid_argument("Invalid argument provided.");
+//         }
+//         else
+//         {
+//             std::cout << "No exception thrown." << std::endl;
+//         }
+//     }
+//     catch (std::bad_alloc& e)
+//     { // 处理 bad_alloc 异常
+//         std::cerr << "Caught std::bad_alloc: " << e.what() << std::endl;
+//     }
+//     catch (std::invalid_argument& e)
+//     { // 处理 invalid_argument 异常
+//         std::cerr << "Caught std::invalid_argument: " << e.what() << std::endl;
+//     }
+
+//     std::cout << "Program continues after try-catch." << std::endl;
+//     return 0;
+// }
+
+// #include <iostream>
+// #include <stdexcept>
+
+// // 函数，检查数组索引
+// int getElement(int arr[], int size, int index)
+// {
+//     if (index < 0 || index >= size)
+//     {
+//         throw std::out_of_range("Index is out of range."); // 抛出异常
+//     }
+//     return arr[index];
+// }
+
+// int main()
+// {
+//     int myArray[5] = {10, 20, 30, 40, 50};
+//     int index;
+
+//     std::cout << "Enter array index (0-4): ";
+//     std::cin >> index;
+
+//     try
+//     {
+//         int value = getElement(myArray, 5, index);
+//         std::cout << "Element at index " << index << " is " << value << "." << std::endl;
+//     }
+//     catch (std::out_of_range& e)
+//     {
+//         std::cerr << "Error: " << e.what() << std::endl;
+//     }
+
+//     return 0;
+// }
+
+// #include <iostream>
+#include <stdexcept>
+
+// 函数，抛出异常
+void func1()
+{
+    throw std::runtime_error("Error in func1.");
+}
+
+// // 函数，调用 func1 并重新抛出异常
+// void func2()
+// {
+//     try
+//     {
+//         func1();
+//     }
+//     catch (...)
+//     { // 捕获所有异常
+//         std::cout << "func2() caught an exception and is rethrowing it." << std::endl;
+//         throw; // 重新抛出当前异常
+//     }
+// }
+
+// int main()
+// {
+//     try
+//     {
+//         func2();
+//     }
+//     catch (std::exception& e)
+//     { // 在 main 中捕获异常
+//         std::cerr << "Main caught: " << e.what() << std::endl;
+//     }
+//     return 0;
+// }
+
+#include <iostream>
+
+// int main()
+// {
+//     // 打印99乘法表
+
+//     for (int i = 1; i <= 9; ++i)
+//     {
+//         for (int j = i; j <= 9; ++j)
+//         {
+//             std::cout << i << " x " << j << " = " << i * j << '\t';
+//         }
+//         std::cout << '\n';
+//     }
+
+//     try
+//     {
+//         try
+//         {
+//             func1();
+//         }
+//         catch (const std::runtime_error& e)
+//         {
+//             std::cerr << e.what() << '\n';
+//         }
+//         std::cout << "after try-catch" << std::endl;
+//     }
+//     catch (const std::exception& e)
+//     {
+//         std::cerr << e.what() << '\n';
+//     }
+//     std::cout << "end" << std::endl;
+// }
+
+#include <algorithm>
+#include <vector>
+
+std::vector<int> my_sort(const std::vector<int>& nums)
+{
+    std::vector<int> result = nums;
+    for (int j{}; j + 1 < result.size(); ++j)
+    {
+        for (int i{}; i + 1 < result.size() - j; ++i)
+        {
+            if (result[i] > result[i + 1])
+            {
+                std::swap(result[i], result[i + 1]);
+            }
+        }
+    }
+    return result;
+}
+
+int main()
+{
+    // 冒泡排序
+    // int count{}; // 数字总数
+    // std::cout << "count: ";
+    // std::cin >> count;
+
+    // std::vector<int> nums{4, 3, 5, 2, 1};
+    // std::vector<int> nums{5, 1, 4, 2, 8, 0, 2, 9};
+    std::vector<int> nums{5, 4, 3, 2, 1};
+    // for (int i{}; i < count; ++i)
+    // {
+    //     int tmp{};
+    //     std::cin >> tmp;
+    //     nums.push_back(tmp);
+    // }
+
+    std::cout << "before sort nums: ";
+    for (auto v : nums)
+    {
+        std::cout << v << ' ';
+    }
+    std::cout << std::endl;
+
+    std::vector<int> result{my_sort(nums)};
+    std::cout << "after sort nums: ";
+    for (auto v : result)
+    {
+        std::cout << v << ' ';
+    }
+    std::cout << std::endl;
+}
