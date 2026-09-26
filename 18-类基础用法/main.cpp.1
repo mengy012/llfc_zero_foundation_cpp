@@ -1,0 +1,53 @@
+#include <iostream>
+#include <string>
+
+class ClassName
+{
+  public:
+    // 公有成员
+    int pub{1};
+
+  private:
+    // 私有成员
+    int prv{2};
+
+  protected:
+    // 受保护成员
+    int prot{3};
+};
+
+class SubClassName : public ClassName
+{
+  private:
+  public:
+    void foo()
+    {
+        std::cout << pub;
+        // std::cout << prv;
+        std::cout << prot;
+    }
+};
+
+// class Student
+// {
+//   public:
+//     // 公有构造函数
+//     Student(const std::string& name, int age);
+
+//     // 公有成员函数
+//     void setName(const std::string& name);
+//     std::string getName() const;
+
+//     void setAge(int age);
+//     int getAge() const;
+
+//   private:
+//     // 私有成员变量
+//     std::string name_;
+//     int age_;
+// };
+
+int main()
+{
+    std::cout << "hello" << std::endl;
+}
