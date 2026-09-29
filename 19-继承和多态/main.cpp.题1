@@ -1,0 +1,68 @@
+#include <iostream>
+#include <string>
+
+// 定义一个基类 Person，包含以下成员：
+
+// ● 私有成员变量：name（字符串类型），age（整数类型）
+// ● 公共成员函数：
+//   ○ 构造函数：接受姓名和年龄作为参数并初始化成员变量
+//   ○ displayInfo()：打印姓名和年龄
+
+class Person
+{
+  public:
+    Person(const std::string& name, int age) : name_(name), age_(age) {}
+
+    virtual void displayInfo()
+    {
+        std::cout << "name: " << name_ << ' ' << "age: " << age_ << std::endl;
+    }
+
+    virtual ~Person() = default;
+
+  protected:
+    std::string name_{};
+    int age_{};
+};
+
+// 然后，定义一个派生类 Student，继承自 Person，并添加以下内容：
+
+// ● 私有成员变量：studentID（字符串类型）
+// ● 公共成员函数：
+//   ○ 构造函数：接受姓名、年龄和学号作为参数，并调用基类构造函数初始化姓名和年龄
+//   ○ 重写 displayInfo()：除了显示姓名和年龄外，还显示学号
+
+class Student : public Person
+{
+  public:
+    Student(const std::string& name, int age, const std::string& studentId) : Person(name, age), studentId_(studentId) {}
+    void displayInfo() override
+    {
+        std::cout << "name: " << name_ << ' ' << "age: " << age_ << ' ' << "studentId: " << studentId_ << std::endl;
+    }
+    virtual ~Student() = default;
+
+  private:
+    std::string studentId_{};
+};
+
+// 要求：
+
+// ● 在 main 函数中，创建一个 Student 对象，并调用 displayInfo() 函数展示信息。
+
+int main()
+{
+    // std::cout << "hello world" << std::endl;
+    Student student("alice", 14, "67");
+
+    {
+        student.displayInfo();
+    }
+
+    {
+        Person* base = &student;
+        base->displayInfo();
+    }
+    {
+    }
+}

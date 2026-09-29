@@ -1,0 +1,72 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+// 题目：
+
+// 定义一个基类 Calculator，包含以下公共成员函数：
+
+// ● int add(int a, int b)：返回两个整数的和
+// ● double add(double a, double b)：返回两个浮点数的和
+
+class Calculator
+{
+  private:
+  public:
+    int add(int a, int b)
+    {
+        return a + b;
+    }
+    double add(double a, double b)
+    {
+        return a + b;
+    }
+};
+
+// 然后，定义一个派生类 AdvancedCalculator，继承自 Calculator，并添加以下成员函数：
+
+class AdvancedCalculator : public Calculator
+{
+  private:
+  public:
+    using Calculator::add;
+
+    int add(int a, int b, int c)
+    {
+        return a + b + c;
+    }
+};
+
+// ● int add(int a, int b, int c)：返回三个整数的和
+
+// 要求：
+
+// ● 在
+
+// main
+
+// 函数中，创建一个
+
+// AdvancedCalculator
+
+// 对象，分别调用以下函数，并观察输出：
+//   ○ add(2, 3)
+//   ○ add(2.5, 3.5)
+//   ○ add(1, 2, 3)
+
+// 注意：
+
+// ● 观察派生类中新增的 add 函数是否影响基类中的同名函数。
+
+int main()
+{
+    AdvancedCalculator calcu;
+
+    std::cout << calcu.add(2, 3) << std::endl;
+    std::cout << calcu.add(2.5, 3.5) << std::endl;
+    std::cout << calcu.Calculator::add(2, 3) << std::endl;
+    std::cout << calcu.Calculator::add(2.5, 3.5) << std::endl;
+    std::cout << calcu.add(1, 2, 3) << std::endl;
+
+    using std::cout;
+}

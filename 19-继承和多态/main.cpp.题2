@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+// 定义一个基类 Shape，包含以下内容：
+
+// ● 公共成员函数：
+//   ○ 虚函数 draw()：在基类中实现，输出 "Drawing a generic shape."
+
+class Shape
+{
+  public:
+    virtual void draw()
+    {
+        std::cout << "Drawing a generic shape" << std::endl;
+    }
+
+    virtual ~Shape() = default;
+};
+
+// 然后，定义两个派生类 Circle 和 Rectangle，分别重写 draw() 函数，实现各自的输出：
+
+// ● Circle 的 draw() 输出："Drawing a circle."
+// ● Rectangle 的 draw() 输出："Drawing a rectangle."
+
+class Circle : public Shape
+{
+  public:
+    void draw() override
+    {
+        std::cout << "Drawing a circle" << std::endl;
+    }
+
+    virtual ~Circle() = default;
+};
+
+class Rectangle : public Shape
+{
+  public:
+    void draw() override
+    {
+        std::cout << "Draw a rectangle" << std::endl;
+    }
+    virtual ~Rectangle() = default;
+};
+
+// 要求：
+
+// ● 在 main 函数中，创建一个 Shape 类型的指针数组，包含不同类型的 Shape 对象（Circle 和 Rectangle）。
+// ● 遍历数组，调用每个对象的 draw() 函数，验证多态性的实现。
+
+int main()
+{
+    std::vector<Shape*> vec;
+    Shape s;
+    Circle c;
+    Rectangle r;
+    vec.push_back(&s);
+    vec.push_back(&c);
+    vec.push_back(&r);
+
+    for (auto v : vec)
+    {
+        v->draw();
+    }
+}

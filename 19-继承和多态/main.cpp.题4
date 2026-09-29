@@ -1,0 +1,55 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+// 定义一个抽象基类 Animal，包含以下内容：
+class Animal
+{
+  public:
+    virtual void makeSound() const = 0;
+    virtual ~Animal() = default;
+};
+
+// ● 公共纯虚函数：
+//   ○ void makeSound() const：纯虚函数，用于发出动物的叫声
+
+// 然后，定义两个派生类 Dog 和 Cat，分别实现 makeSound() 函数：
+
+// ● Dog 的 makeSound() 输出："Woof!"
+
+class Dog : public Animal
+{
+  public:
+    void makeSound() const override
+    {
+        std::cout << "Woof!" << std::endl;
+    }
+};
+class Cat : public Animal
+{
+  public:
+    void makeSound() const override
+    {
+        std::cout << "Meow!" << std::endl;
+    }
+};
+// ● Cat 的 makeSound() 输出："Meow!"
+
+// 要求：
+
+// ● 在 main 函数中，创建 Dog 和 Cat 对象的基类指针，并调用 makeSound() 函数，展示多态性。
+
+int main()
+{
+    Dog d;
+    Cat c;
+
+    std::vector<Animal*> animals;
+    animals.push_back(&d);
+    animals.push_back(&c);
+
+    for (auto v : animals)
+    {
+        v->makeSound();
+    }
+}
