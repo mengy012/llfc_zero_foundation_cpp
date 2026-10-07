@@ -1,0 +1,215 @@
+#include <iostream>
+#include <stack>
+#include <cstdlib>
+#include <assert.h>
+#include <exception>
+#include <cstdint>
+#include <thread>
+#include <chrono>
+#include <vector>
+
+#include <chrono>
+#include <iostream>
+
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
+inline void setUtf8()
+{
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+#endif // _WIN32
+}
+
+class Timer
+{
+  public:
+    explicit Timer(const std::string& task_name);
+    ~Timer() noexcept;
+
+    Timer(const Timer&) = delete;
+    Timer& operator=(const Timer&) = delete;
+    Timer(Timer&&) = delete;
+    Timer& operator=(Timer&&) = delete;
+
+  private:
+    std::string task_name_;
+    std::chrono::steady_clock::time_point start_;
+};
+
+inline void print_hms_ms_ns(std::chrono::nanoseconds total)
+{
+    auto h = std::chrono::duration_cast<std::chrono::hours>(total);
+    total -= h;
+
+    auto m = std::chrono::duration_cast<std::chrono::minutes>(total);
+    total -= m;
+
+    auto s = std::chrono::duration_cast<std::chrono::seconds>(total);
+    total -= s;
+
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(total);
+    total -= ms;
+
+    auto micro_seconds = std::chrono::duration_cast<std::chrono::microseconds>(total);
+    total -= micro_seconds;
+
+    std::cout << h.count() << "h " << m.count() << "m " << s.count() << "s " << ms.count() << "ms " << micro_seconds.count() << "us " << total.count() << "ns\n";
+}
+
+inline Timer::Timer(const std::string& task_name) : task_name_(task_name), start_(std::chrono::steady_clock::now())
+{
+    setUtf8();
+}
+
+inline Timer::~Timer() noexcept
+{
+    std::chrono::steady_clock::time_point end;
+    end = std::chrono::steady_clock::now();
+    std::cout << "task:" << task_name_ << ' ';
+    print_hms_ms_ns(end - start_);
+}
+
+class MemoryPool
+{
+  public:
+    MemoryPool(size_t obj_size, size_t total_size) : total_size_{total_size}, obj_size_{obj_size}, pool_{new unsigned char[total_size]}
+    {
+
+        for (size_t i = 0; i < total_size / obj_size; i++)
+        {
+            free_list_.push(static_cast<void*>(pool_ + obj_size * i));
+        }
+    }
+
+    void* pool_allocate()
+    {
+        // std::cout << "free: " << free_list_.size() << std::endl;
+        if (free_list_.empty())
+        {
+            throw std::bad_alloc();
+        }
+        void* tmp = free_list_.top();
+        free_list_.pop();
+        return tmp;
+    }
+
+    void pool_free(void* p)
+    {
+        auto begin = static_cast<void*>(pool_);
+        auto end = static_cast<void*>(pool_ + total_size_);
+
+        if (p >= begin && p < end && !(static_cast<unsigned char*>(p) - pool_) % alignof(MemoryPool))
+        {
+            free_list_.push(p);
+        }
+    }
+    ~MemoryPool()
+    {
+        delete[] pool_;
+    }
+
+    MemoryPool(const MemoryPool& other) = delete;
+    MemoryPool& operator=(const MemoryPool& other) = delete;
+
+  private:
+    size_t total_size_{};
+    size_t obj_size_{};
+    unsigned char* pool_{nullptr};
+    std::stack<void*> free_list_{};
+};
+
+int main()
+{
+    // std::stack<int> s;
+    // s.push(1);
+    // s.push(2);
+    // s.push(3);
+
+    // assert(s.top() == 3);
+    // s.pop();
+    // assert(s.top() == 2);
+
+    // std::stack<int> s;
+    // assert(s.empty() == true);
+
+    // try
+    // {
+    //     MemoryPool pool(sizeof(int), 3 * sizeof(int));
+
+    //     int* int_1 = (int*)pool.pool_allocate();
+    //     int* int_2 = (int*)pool.pool_allocate();
+    //     int* int_3 = (int*)pool.pool_allocate();
+    //     // int* int_4 = (int*)pool.pool_allocate();
+
+    //     *int_1 = 1;
+    //     *int_2 = 2;
+    //     *int_3 = 3;
+
+    //     assert(*int_1 == 1);
+    //     assert(*int_2 == 2);
+    //     assert(*int_3 == 3);
+
+    //     pool.pool_free(int_3);
+    //     pool.pool_free(int_2);
+    //     pool.pool_free(int_1);
+
+    //     // assert(*int_4 == 4);
+    // }
+    // catch (const std::bad_alloc& e)
+    // {
+    //     std::cout << e.what() << std::endl;
+    // }
+    // catch (const std::exception& e)
+    // {
+    //     std::cout << e.what() << std::endl;
+    // }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+    constexpr int obj_count{10000 * 10};
+    std::vector<std::jthread> ths;
+    {
+        ths.emplace_back([&]()
+        {
+            std::vector<int*> int_objs(obj_count);
+            Timer timer("use memory pool");
+            MemoryPool pool(sizeof(int), obj_count * sizeof(int));
+            for (size_t i = 0; i < obj_count; i++)
+            {
+                int_objs[i] = (int*)pool.pool_allocate();
+
+                *(int_objs[i]) = i + 100;
+            }
+        });
+    }
+
+    for (int i = 0; i < 6; i++)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout << i + 1 << ' ' << std::flush;
+    }
+    std::cout << std::endl;
+
+    {
+        ths.emplace_back([&]()
+        {
+            std::vector<int*> int_objs(obj_count);
+            Timer timer("use new");
+            for (size_t i = 0; i < obj_count; i++)
+            {
+                int_objs[i] = new int;
+
+                *(int_objs[i]) = i + 100;
+            }
+            for (size_t i = 0; i < obj_count; i++)
+            {
+                delete (int_objs[i]);
+            }
+        });
+    }
+
+    int* p = new int;
+}

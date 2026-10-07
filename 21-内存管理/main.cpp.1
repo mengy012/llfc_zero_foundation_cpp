@@ -1,0 +1,134 @@
+#include <iostream>
+#include <cstdlib>
+#include <new>
+#include <memory>
+#include <cstring>
+
+class MyClass
+{
+  public:
+    MyClass(int val) : value(val)
+    {
+        std::cout << "Constructor called with value: " << value << std::endl;
+    }
+    ~MyClass()
+    {
+        std::cout << "Destructor called for value: " << value << std::endl;
+    }
+    int value;
+};
+
+int main()
+{
+    // {
+    //     // 分配一个整数的内存
+    //     int* p = (int*)malloc(sizeof(int));
+    //     if (p == nullptr)
+    //     {
+    //         std::cerr << "Memory allocation failed" << std::endl;
+    //         return 1;
+    //     }
+
+    //     *p = 42;
+    //     std::cout << "Value: " << *p << std::endl;
+
+    //     // 释放内存
+    //     free(p);
+    // }
+
+    // {
+    //     MyClass* obj = new MyClass(10);
+    //     std::cout << "Object value: " << obj->value << std::endl;
+    //     delete obj; // 调用析构函数并释放内存
+
+    //     // Constructor called with value: 10
+    //     // Object value: 10
+    //     // Destructor called with value: 10
+    // }
+
+    // {
+    //     int* arr = new int[5]; // 分配5个整数
+    //     for (int i = 0; i < 5; ++i)
+    //     {
+    //         arr[i] = i * 10;
+    //     }
+    //     for (int i = 0; i < 5; ++i)
+    //     {
+    //         std::cout << "arr[" << i << "] = " << arr[i] << std::endl;
+    //     }
+    //     delete[] arr; // 释放数组内存
+
+    //     // 0 10 20 30 40
+    // }
+
+    // {
+    //     int* p = new (std::nothrow) int;
+    //     if (p == nullptr)
+    //     {
+    //         std::cerr << "Memory allocation failed" << std::endl;
+    //         return 1;
+    //     }
+    //     *p = 100;
+    //     std::cout << "Value: " << *p << std::endl;
+    //     delete p;
+    // }
+
+    // {
+    //     MyClass* p = (MyClass*)malloc(sizeof(MyClass));
+
+    //     new (p) MyClass(42);
+    //     std::cout << p->value << std::endl;
+    //     p->~MyClass();
+
+    //     free(p);
+
+    // }
+    {
+        // 初始分配 3 个整数
+        int* arr = (int*)malloc(3 * sizeof(int));
+        if (arr == nullptr)
+        {
+            std::cerr << "Initial malloc failed" << std::endl;
+            return 1;
+        }
+
+        // 初始化数组
+        for (int i = 0; i < 3; ++i)
+        {
+            arr[i] = i + 1;
+        }
+        // 1 2 3
+        std::cout << "Initial array: ";
+        for (int i = 0; i < 3; ++i)
+        {
+            std::cout << arr[i] << " ";
+        }
+        std::cout << std::endl;
+
+        // 重新分配为 5 个整数
+        int* temp = (int*)realloc(arr, 5 * sizeof(int));
+        if (temp == nullptr)
+        {
+            std::cerr << "Realloc failed" << std::endl;
+            free(arr); // 释放原内存
+            return 1;
+        }
+        arr = temp;
+
+        // 初始化新元素
+        for (int i = 3; i < 5; ++i)
+        {
+            arr[i] = (i + 1) * 10;
+        }
+
+        std::cout << "Reallocated array: ";
+        for (int i = 0; i < 5; ++i)
+        {
+            std::cout << arr[i] << " ";
+        }
+        std::cout << std::endl;
+
+        // 释放内存
+        free(arr);
+    }
+}

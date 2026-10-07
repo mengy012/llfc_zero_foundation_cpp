@@ -1,0 +1,177 @@
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <exception>
+#include <cassert>
+
+// 实现一个简单的动态数组类，支持添加元素、访问元素和自动扩展
+
+class DynamicArray
+{
+  public:
+    DynamicArray() {}
+    DynamicArray(size_t size, int v) : size_{size}, capability_{size}, data_{new int[capability_]}
+    {
+        if (data_ == nullptr)
+        {
+            throw std::bad_alloc();
+        }
+        for (size_t i = 0; i < size; i++)
+        {
+            data_[i] = v;
+        }
+    }
+    DynamicArray(std::initializer_list<int> list) : size_{list.size()}, capability_{size_}, data_{new int[capability_]}
+    {
+        if (data_ == nullptr)
+        {
+            throw std::bad_alloc();
+        }
+
+        auto beg = list.begin();
+        for (size_t i{}; i < size_; ++i)
+        {
+            data_[i] = *beg;
+            beg++;
+        }
+    }
+    ~DynamicArray()
+    {
+        delete[] data_;
+    }
+
+    // 添加元素
+    void push_back(int v)
+    {
+
+        if (size_ == capability_)
+        {
+            if (resize(capability_ == 0 ? 1 : capability_ * 2))
+            {
+                std::cout << "resize() success" << std::endl;
+            }
+        }
+        data_[size_] = v;
+        size_++;
+    }
+    // 访问元素
+    int& operator[](size_t index)
+    {
+        if (index >= size_)
+        {
+            throw std::out_of_range("out of range in DynamicArray");
+        }
+
+        return data_[index];
+    }
+
+    size_t get_size() const
+    {
+        return size_;
+    }
+    size_t get_capability() const
+    {
+        return capability_;
+    }
+    int* get_data() const
+    {
+        return data_;
+    }
+
+    // 禁止拷贝
+    DynamicArray(const DynamicArray&) = delete;
+    DynamicArray& operator=(const DynamicArray&) = delete;
+
+  private:
+    // 自动扩展
+    bool resize(size_t size)
+    {
+        int* tmp = new int[size];
+        if (tmp == nullptr)
+        {
+            throw std::bad_alloc();
+        }
+
+        if (data_ != nullptr)
+        {
+            std::memcpy(tmp, data_, size_ * sizeof(int));
+        }
+        delete[] data_;
+        data_ = tmp;
+        capability_ = size;
+
+        return true;
+    }
+
+    size_t size_{};
+    size_t capability_{};
+    int* data_{nullptr};
+};
+
+int main()
+{
+    {
+        // 默认构造
+        DynamicArray arr;
+        assert(arr.get_size() == 0);
+        assert(arr.get_capability() == 0);
+        assert(arr.get_data() == nullptr);
+        assert(arr.get_size() == 0);
+        assert(arr.get_capability() == 0);
+        assert(arr.get_data() == nullptr);
+    }
+    {
+        // 有参构造
+        DynamicArray arr(3, 9);
+        assert(arr.get_size() == 3);
+        assert(arr.get_capability() == 3);
+        assert(arr.get_data() != nullptr);
+        assert(arr[0] == 9);
+    }
+    {
+        // 初始化列表
+        DynamicArray arr{1, 2, 3};
+        assert(arr.get_size() == 3);
+        assert(arr.get_capability() == 3);
+        assert(arr.get_data() != nullptr);
+        assert(arr[0] == 1);
+    }
+
+    {
+        DynamicArray arr{1, 2, 3};
+        // 添加元素 && 自动扩展
+        arr.push_back(4);
+        arr.push_back(5);
+        arr.push_back(6);
+
+        assert(arr.get_size() == 6);
+        assert(arr[3] == 4);
+
+        // std::cout << arr.get_capability() << std::endl;
+    }
+
+    {
+        DynamicArray arr{1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+        try
+        {
+            for (size_t i = 0; i < 9; i++)
+            {
+                assert(arr[i] == i + 1);
+            }
+
+            assert(arr.get_size() == 9);
+
+            arr[9];
+        }
+        catch (const std::out_of_range& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+    }
+}

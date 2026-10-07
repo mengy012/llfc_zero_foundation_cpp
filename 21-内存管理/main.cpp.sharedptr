@@ -1,0 +1,205 @@
+#include <iostream>
+#include <memory>
+#include <vector>
+#include <cassert>
+#include <string>
+
+struct ControlBlock
+{
+    size_t ref_count_{};
+
+    ControlBlock() : ref_count_{1} {}
+};
+
+template <typename T>
+class XsharedPtr
+{
+  public:
+    // 默认构造
+    XsharedPtr() = default;
+
+    // 参数构造 指针 不允许隐式转换
+    explicit XsharedPtr(T* data) : data_{data}
+    {
+        if (data)
+        {
+            ctl_ = new ControlBlock;
+        }
+    }
+
+    // 辅助函数 用于控制计数，当计数归零释放 data_ 和 clt_
+    void release()
+    {
+        if (ctl_)
+        {
+            ctl_->ref_count_--;
+
+            if (ctl_->ref_count_ == 0)
+            {
+                delete ctl_;
+                delete data_;
+
+            }
+        }
+                        ctl_ = nullptr;
+                data_ = nullptr;
+
+    }
+
+    // 拷贝相关
+    // 拷贝构造
+    XsharedPtr(const XsharedPtr& other) : data_{other.data_}, ctl_{other.ctl_}
+    {
+        if (ctl_)
+        {
+            ++ctl_->ref_count_;
+        }
+    }
+    // 拷贝赋值
+    XsharedPtr& operator=(const XsharedPtr& other)
+    {
+        if (this == &other)
+        {
+            return *this;
+        }
+
+        release();
+
+        data_ = other.data_;
+        ctl_ = other.ctl_;
+        if (ctl_)
+        {
+            ++ctl_->ref_count_;
+        }
+        return *this;
+    }
+
+    // 移动相关
+    // 移动构造
+    XsharedPtr(XsharedPtr&& other) : data_{other.data_}, ctl_{other.ctl_}
+    {
+        other.data_ = nullptr;
+        other.ctl_ = nullptr;
+    }
+    // 移动赋值
+    XsharedPtr& operator=(XsharedPtr&& other)
+    {
+        if (this != &other)
+        {
+            release();
+
+            data_ = other.data_;
+            ctl_ = other.ctl_;
+
+            other.data_ = nullptr;
+            other.ctl_ = nullptr;
+        }
+        return *this;
+    }
+
+    // 重载*
+    T& operator*() const
+    {
+        return *data_;
+    }
+
+    // 重载->
+    T* operator->() const
+    {
+        return data_;
+    }
+
+    // 获取当前引用计数
+    size_t use_count() const
+    {
+        return ctl_ ? ctl_->ref_count_ : 0;
+    }
+    // 获取裸指针
+    T* get() const
+    {
+        return data_;
+    }
+    // 重置指针
+    void reset(T* data = nullptr)
+    {
+        if (data)
+        {
+            release();
+
+            data_ = data;
+            ctl_ = new ControlBlock;
+        }
+        else
+        {
+            *this = XsharedPtr();
+        }
+    }
+
+    ~XsharedPtr()
+    {
+        release();
+    }
+
+  private:
+    T* data_{nullptr};
+    ControlBlock* ctl_{nullptr};
+};
+
+// 测试类
+class Test
+{
+  public:
+    Test(int val) : value(val)
+    {
+        std::cout << "Test Constructor: " << value << std::endl;
+    }
+    ~Test()
+    {
+        std::cout << "Test Destructor: " << value << std::endl;
+    }
+    void show() const
+    {
+        std::cout << "Value: " << value << std::endl;
+    }
+
+  private:
+    int value;
+};
+
+int main()
+{
+    {
+        std::cout << "Creating default constructed shared_ptr..." << std::endl;
+        XsharedPtr<Test> ptr1; // 默认构造
+        std::cout << "ptr1 use_count: " << ptr1.use_count() << std::endl;
+
+        std::cout << "\nCreating shared_ptr with resource..." << std::endl;
+        XsharedPtr<Test> ptr2(new Test(100)); // 非默认构造
+        std::cout << "ptr2 use_count: " << ptr2.use_count() << std::endl;
+        ptr2->show();
+
+        std::cout << "\nCopying ptr2 to ptr3..." << std::endl;
+        XsharedPtr<Test> ptr3 = ptr2; // 拷贝构造
+        std::cout << "ptr2 use_count: " << ptr2.use_count() << std::endl;
+        std::cout << "ptr3 use_count: " << ptr3.use_count() << std::endl;
+        ptr3->show();
+
+        std::cout << "\nAssigning ptr3 to ptr1..." << std::endl;
+        ptr1 = ptr3; // 拷贝赋值
+        std::cout << "ptr1 use_count: " << ptr1.use_count() << std::endl;
+        std::cout << "ptr2 use_count: " << ptr2.use_count() << std::endl;
+        std::cout << "ptr3 use_count: " << ptr3.use_count() << std::endl;
+
+        std::cout << "\nResetting ptr2..." << std::endl;
+        ptr2.reset(new Test(200)); // 重新指向新的对象
+        std::cout << "ptr2 use_count: " << ptr2.use_count() << std::endl;
+        ptr2->show();
+        std::cout << "ptr1 use_count: " << ptr1.use_count() << std::endl;
+        std::cout << "ptr3 use_count: " << ptr3.use_count() << std::endl;
+
+        std::cout << "\nExiting scope..." << std::endl;
+    } // ptr2, ptr1, ptr3 离开作用域
+
+    std::cout << "End of main." << std::endl;
+    return 0;
+}
