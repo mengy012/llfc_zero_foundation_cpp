@@ -1,0 +1,67 @@
+// 练习题1：使用 std::unique_ptr 管理动态资源
+// 题目描述：
+// 编写一个C++类 ResourceManager，该类负责管理一个动态分配的整数资源。使用 std::unique_ptr 来确保资源在 ResourceManager 对象销毁时被正确释放，从而避免内存泄漏。
+// 要求：
+// 1. 类定义：
+//   ○ 创建一个名为 ResourceManager 的类。
+//   ○ 添加一个私有成员变量，类型为 std::unique_ptr<int>，用于管理动态分配的整数。
+// 2. 构造函数与析构函数：
+//   ○ 实现构造函数，接受一个整数参数并初始化 std::unique_ptr<int>。
+//   ○ 不需要显式定义析构函数，依赖 std::unique_ptr 自动释放资源。
+// 3. 成员函数：
+//   ○ int getValue() const;
+// 返回当前管理的整数值。
+//   ○ void setValue(int newValue);
+// 设置整数的新值。
+// 4. 禁止拷贝：
+//   ○ 禁用拷贝构造函数和拷贝赋值运算符，确保 ResourceManager 对象不能被拷贝。
+//   ○ 允许移动构造和移动赋值运算符。
+// 5. 测试：
+//   ○ 编写一个 main 函数，创建 ResourceManager 对象，设置并获取值，展示智能指针的作用。
+
+#include <iostream>
+#include <memory>
+
+class ResourceManager
+{
+  public:
+    ResourceManager(int v) : data_{std::make_unique<int>(v)} {}
+    ResourceManager() = default;
+    int get_value() const
+    {
+        return data_ ? *data_ : int{};
+    }
+
+    void set_value(int v)
+    {
+        data_ ? (*data_ = v) : 0;
+    }
+
+    ResourceManager(ResourceManager&&) noexcept = default;
+    ResourceManager& operator=(ResourceManager&&) noexcept = default;
+
+    ResourceManager(const ResourceManager&) = delete;
+    ResourceManager& operator=(const ResourceManager&) = delete;
+
+    ~ResourceManager() = default;
+
+  private:
+    std::unique_ptr<int> data_;
+};
+
+int main()
+{
+    ResourceManager m(43);
+    std::cout << m.get_value() << std::endl;
+
+    m.set_value(999);
+    std::cout << m.get_value() << std::endl;
+
+    {
+        ResourceManager a;
+        std::cout << a.get_value() << std::endl;
+
+        a.set_value(999);
+        std::cout << a.get_value() << std::endl;
+    }
+}

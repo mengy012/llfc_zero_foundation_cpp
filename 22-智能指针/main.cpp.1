@@ -1,0 +1,265 @@
+// #include <iostream>
+// #include <string>
+// #include <numbers>
+// #include <numeric>
+
+// #define fn auto
+
+// fn add(auto a, auto b) -> auto
+// {
+//     return a + b;
+// }
+
+// int main(int argc, const char** argv)
+// {
+//     // std::cout << argc << std::endl;
+//     // std::cout << argv[0] << std::endl;
+
+//     // std::cout << add(1, 2) << std::endl;
+
+//     // std::string a{"hello"};
+//     // std::string b{" world"};
+
+//     // std::cout << add(a, b) << std::endl;
+//     // std::cout << std::numeric_limits<float>::max() << std::endl;
+//     // std::cout << std::numeric_limits<float>::lowest() << std::endl;
+// }
+
+// #include <iostream>
+// #include <memory>
+
+// class Test
+// {
+//   public:
+//     Test(int val) : value(val)
+//     {
+//         std::cout << "Test Constructor: " << value << std::endl;
+//     }
+//     ~Test()
+//     {
+//         std::cout << "Test Destructor: " << value << std::endl;
+//     }
+//     void show() const
+//     {
+//         std::cout << "Value: " << value << std::endl;
+//     }
+
+//   private:
+//     int value;
+// };
+
+// int main()
+// {
+//     // { // 创建一个 unique_ptr
+//     //     std::unique_ptr<Test> ptr1(new Test(100));
+//     //     ptr1->show();
+
+//     //     // 使用 make_unique（C++14 引入）
+//     //     auto ptr2 = std::make_unique<Test>(200);
+//     //     ptr2->show();
+
+//     //     // 移动 unique_ptr
+//     //     std::unique_ptr<Test> ptr3 = std::move(ptr1);
+//     //     if (!ptr1)
+//     //     {
+//     //         std::cout << "ptr1 is now nullptr after move." << std::endl;
+//     //     }
+//     //     ptr3->show();
+
+//     //     // 重置 unique_ptr
+//     //     ptr2.reset(new Test(300));
+//     //     ptr2->show();
+
+//     //     // unique_ptr 自动释放资源
+//     // }
+//     {
+//         // 创建一个 shared_ptr
+//         std::shared_ptr<Test> sp1(new Test(100));
+//         std::cout << "sp1 use_count: " << sp1.use_count() << std::endl;
+//         sp1->show();
+
+//         // 通过拷贝构造共享所有权
+//         std::shared_ptr<Test> sp2 = sp1;
+//         std::cout << "After sp2 = sp1:" << std::endl;
+//         std::cout << "sp1 use_count: " << sp1.use_count() << std::endl;
+//         std::cout << "sp2 use_count: " << sp2.use_count() << std::endl;
+
+//         // 通过拷贝赋值共享所有权
+//         std::shared_ptr<Test> sp3;
+//         sp3 = sp2;
+//         std::cout << "After sp3 = sp2:" << std::endl;
+//         std::cout << "sp1 use_count: " << sp1.use_count() << std::endl;
+//         std::cout << "sp2 use_count: " << sp2.use_count() << std::endl;
+//         std::cout << "sp3 use_count: " << sp3.use_count() << std::endl;
+
+//         // 重置 shared_ptr
+//         sp2.reset(new Test(200));
+//         std::cout << "After sp2.reset(new Test(200)):" << std::endl;
+//         std::cout << "sp1 use_count: " << sp1.use_count() << std::endl;
+//         std::cout << "sp2 use_count: " << sp2.use_count() << std::endl;
+//         std::cout << "sp3 use_count: " << sp3.use_count() << std::endl;
+//         sp2->show();
+
+//         // 自动释放资源
+//         std::cout << "Exiting main..." << std::endl;
+//     }
+//     return 0;
+// }
+
+// #include <iostream>
+// #include <memory>
+
+// class B; // 前向声明
+
+// class A
+// {
+//   public:
+//     std::shared_ptr<B> ptrB;
+
+//     A()
+//     {
+//         std::cout << "A Constructor" << std::endl;
+//     }
+//     ~A()
+//     {
+//         std::cout << "A Destructor" << std::endl;
+//     }
+
+//     void show() const noexcept
+//     {
+//         std::cout << 42 << std::endl;
+//     }
+// };
+
+// class B
+// {
+//   public:
+//     std::weak_ptr<A> ptrA;
+
+//     B()
+//     {
+//         std::cout << "B Constructor" << std::endl;
+//     }
+//     ~B()
+//     {
+//         std::cout << "B Destructor" << std::endl;
+//     }
+// };
+
+// int main()
+// {
+//     {
+//         std::shared_ptr<A> a = std::make_shared<A>();
+//         std::shared_ptr<B> b = std::make_shared<B>();
+//         a->ptrB = b;
+//         b->ptrA = a;
+
+//         if (auto sp = b->ptrA.lock())
+//         {
+//             std::cout << "a use_count: " << a.use_count() << std::endl;
+//             std::cout << "b use_count: " << b.use_count() << std::endl;
+
+//             sp->show();
+//         }
+
+//         std::cout << "a use_count: " << a.use_count() << std::endl;
+//         std::cout << "b use_count: " << b.use_count() << std::endl;
+//     }
+//     std::cout << "Exiting main..." << std::endl;
+
+//     return 0;
+// }
+
+// #include <iostream>
+// #include <memory>
+
+// int main()
+// {
+//     std::shared_ptr<int> sp = std::make_shared<int>(42);
+//     std::weak_ptr<int> wp = sp;
+
+//     if (auto locked = wp.lock())
+//     { // 尝试获取 shared_ptr
+//         std::cout << "Value: " << *locked << std::endl;
+//     }
+//     else
+//     {
+//         std::cout << "Object no longer exists." << std::endl;
+//     }
+
+//     sp.reset(); // 释放资源
+
+//     if (auto locked = wp.lock())
+//     { // 再次尝试获取 shared_ptr
+//         std::cout << "Value: " << *locked << std::endl;
+//     }
+//     else
+//     {
+//         std::cout << "Object no longer exists." << std::endl;
+//     }
+
+//     return 0;
+// }
+
+#include <iostream>
+#include <memory>
+#include <cstdio>
+#include <filesystem>
+
+struct FileDeleter
+{
+    void operator()(FILE* fp) const
+    {
+        if (fp)
+        {
+            std::cout << "Closing file." << std::endl;
+            fclose(fp);
+        }
+    }
+};
+
+static constexpr auto file_deleter = [](FILE* f)
+{
+    if (f)
+    {
+        std::cout << "Closing file." << std::endl;
+
+        fclose(f);
+    }
+};
+
+int main()
+{
+    // {
+    //     std::shared_ptr<FILE> filePtr(fopen("example.txt", "wb"), FileDeleter());
+    //     if (filePtr)
+    //     {
+    //         std::cout << "File opened successfully." << std::endl;
+    //         // 使用 filePtr 进行文件操作
+    //         fprintf(filePtr.get(), "Hello, World!\n");
+    //     }
+    // } // 自动关闭文件
+
+    std::cout << std::filesystem::current_path() << std::endl;
+    {
+        std::unique_ptr<FILE, decltype(file_deleter)> f1(fopen("example.txt", "wb"), file_deleter);
+        if (f1)
+        {
+            {
+                fprintf(f1.get(), "f1\n");
+            }
+        }
+    }
+    {
+        std::shared_ptr<FILE> f2(fopen("example.txt", "ab"), file_deleter);
+        if (f2)
+        {
+            {
+                fprintf(f2.get(), "f2");
+            }
+        }
+    }
+
+    std::cout << "Exiting main..." << std::endl;
+    return 0;
+}
