@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.14)
+
+project(smartptr VERSION 0.0.1 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+file(GLOB SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/*.cpp")
+
+add_executable(demo ${SOURCES})
+
+set_target_properties(demo PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
