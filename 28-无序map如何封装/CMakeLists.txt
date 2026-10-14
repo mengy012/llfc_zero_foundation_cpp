@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 4.2)
+project(demo LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+file(GLOB SOURCE_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/*.cpp")
+
+add_executable(${PROJECT_NAME} ${SOURCE_FILES}) 
