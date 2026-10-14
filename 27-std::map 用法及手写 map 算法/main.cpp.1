@@ -1,0 +1,78 @@
+#include <iostream>
+#include <map>
+#include <string>
+#include <algorithm>
+
+int main()
+{
+
+    std::map<int, std::string> my_map = {{1, "a"}, {2, "b"}, {3, "c"}};
+    // for (const auto& ele : my_map)
+    // {
+    //     std::cout << ele.first << ' ' << ele.second << std::endl;
+    // }
+    {
+        my_map.emplace(4, "d");
+
+        my_map.insert(std::pair{5, "e"});
+
+        my_map.insert(std::make_pair(6, "f"));
+
+        my_map.insert({7, "g"});
+
+        for (const auto& ele : my_map)
+        {
+            std::cout << ele.first << ' ' << ele.second << std::endl;
+        }
+    }
+
+    {
+
+        std::cout << my_map.count(8) << std::endl;
+        // 0
+    }
+    {
+        auto it = my_map.upper_bound(6);
+        std::cout << it->first << std::endl;
+    }
+    {
+        auto it = my_map.lower_bound(6);
+        std::cout << it->first << std::endl;
+    }
+    {
+        auto [first, last] = my_map.equal_range(8);
+        for (; first != last; ++first)
+        {
+            std::cout << first->first << std::endl;
+        }
+    }
+
+    {
+        std::map<int, std::string, std::greater<int>> my_map{{1, "a"}, {2, "b"}, {3, "c"}};
+        for (const auto& ele : my_map)
+        {
+            std::cout << ele.first << ' ' << ele.second << std::endl;
+        }
+    }
+    {
+        std::greater<int> f;
+        std::cout << f(1, 2) << std::endl;
+    }
+
+    {
+        auto it = my_map.erase(1);
+        std::cout << it << std::endl;
+        for (const auto& ele : my_map)
+        {
+            std::cout << ele.first << ' ' << ele.second << std::endl;
+        }
+    }
+    {
+        auto it = my_map.erase(my_map.begin());
+        std::cout << it->first << std::endl;
+        for (const auto& ele : my_map)
+        {
+            std::cout << ele.first << ' ' << ele.second << std::endl;
+        }
+    }
+}
