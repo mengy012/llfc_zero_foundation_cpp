@@ -269,7 +269,7 @@ class MyHashMap
                     size_t new_index = hash_value % new_bucket_count_;
 
                     std::list<HashNode>& new_list = new_buckets_[new_index];
-                    new_list.emplace_back(std::move(node));
+                    new_list.emplace_back(node);
                 }
             }
         }

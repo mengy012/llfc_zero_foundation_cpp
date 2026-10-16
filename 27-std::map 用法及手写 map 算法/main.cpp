@@ -429,28 +429,48 @@ int main()
     //     my_map.show();
     // }
 
+    // {
+
+    //     my::map<std::string, int> myMap;
+    //     // 插入元素
+    //     myMap.insert("apple", 3);
+    //     myMap.insert("banana", 5);
+    //     myMap.insert("orange", 2);
+    //     myMap.insert("grape", 7);
+    //     myMap.insert("cherry", 4);
+
+    //     myMap.show();
+
+    //     std::cout << myMap.maximum_key() << std::endl;
+    //     std::cout << myMap.minimum_key() << std::endl;
+
+    //     std::cout << myMap.contains("banana") << std::endl;
+    //     std::cout << myMap.contains("aaa") << std::endl;
+
+    //     // 删除元素
+    //     myMap.erase("apple");
+    //     myMap.erase("cherry");
+
+    //     myMap.show();
+    // }
+
     {
+        my::map<int, int> myMap;
+        myMap.insert(4, 4);
+        myMap.insert(2, 2);
+        myMap.insert(6, 6);
+        myMap.insert(1, 1);
+        myMap.insert(3, 3);
+        myMap.insert(5, 5);
+        myMap.insert(7, 7);
 
-        my::map<std::string, int> myMap;
-        // 插入元素
-        myMap.insert("apple", 3);
-        myMap.insert("banana", 5);
-        myMap.insert("orange", 2);
-        myMap.insert("grape", 7);
-        myMap.insert("cherry", 4);
 
-        myMap.show();
+        // myMap.show();
 
-        std::cout << myMap.maximum_key() << std::endl;
-        std::cout << myMap.minimum_key() << std::endl;
-
-        std::cout << myMap.contains("banana") << std::endl;
-        std::cout << myMap.contains("aaa") << std::endl;
-
-        // 删除元素
-        myMap.erase("apple");
-        myMap.erase("cherry");
+        myMap.erase(4);
+        myMap.erase(2);
 
         myMap.show();
+
     }
 }
