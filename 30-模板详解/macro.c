@@ -10,14 +10,12 @@
 
 #define LOG(fmt, ...) printf("[LOG]: " fmt __VA_OPT__(, ) __VA_ARGS__)
 
-
 #define STATUS_LIST(x) \
     x(IDLE)            \
     x(RUNNING)         \
     x(STOPPED)
 
 #define MAKE_ENUM(name) name,
-
 
 enum Status
 {
@@ -30,10 +28,10 @@ const char* status_name(enum Status status)
 {
     switch (status)
     {
-    STATUS_LIST(MAKE_CASE)
-    
+        STATUS_LIST(MAKE_CASE)
+
     default:
-     return "UNKNOWN";   
+        return "UNKNOWN";
     }
 }
 
@@ -41,6 +39,8 @@ int main()
 {
     printf("%s\n", STR(CAT(var_, VALUE)));
     printf("%s\n", STR(VALUE));
+    printf("%s\n", STR(CAT(a, b)));
+    // printf("%s\n", CAT("a", "b"));
 
     LOG("info\n");
     LOG("a: %d\n", 1);

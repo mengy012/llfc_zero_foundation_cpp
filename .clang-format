@@ -15,3 +15,5 @@ PointerAlignment: Left
 SortIncludes: false
 
 LambdaBodyIndentation: OuterScope
+
+SkipMacroDefinitionBody: true
