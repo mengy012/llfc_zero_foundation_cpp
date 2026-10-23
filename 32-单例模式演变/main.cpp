@@ -2,6 +2,8 @@
 #include <utility>
 #include <type_traits>
 #include <string>
+#include <functional>
+#include <mutex>
 
 template <typename T>
 class Single
@@ -37,6 +39,40 @@ class A final : public Single<A>
     }
 };
 
+template <typename T>
+class Base
+{
+  public:
+    void show()
+    {
+        static_cast<T*>(this)->show();
+    }
+};
+
+class Derived_apple : public Base<Derived_apple>
+{
+    friend class Base<Derived_apple>;
+    void show()
+    {
+        std::cout << "Derived_apple" << std::endl;
+    }
+};
+
+class Derived_banana : public Base<Derived_banana>
+{
+    friend class Base<Derived_banana>;
+    void show()
+    {
+        std::cout << "Derived_banana" << std::endl;
+    }
+};
+
+template <typename T>
+void show(T& obj)
+{
+    static_cast<Base<T>*>(&obj)->show();
+}
+
 int main()
 {
     {
@@ -51,5 +87,12 @@ int main()
         std::cout << A::instance().get_p() << std::endl;
         std::cout << A::instance().get_p() << std::endl;
         std::cout << A::instance().get_p() << std::endl;
+    }
+
+    {
+        Derived_apple apple;
+        Derived_banana banana;
+        show(apple);
+        show(banana);
     }
 }
