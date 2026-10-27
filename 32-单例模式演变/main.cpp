@@ -4,6 +4,11 @@
 #include <string>
 #include <functional>
 #include <mutex>
+#include <memory>
+#include <functional>
+#include <variant>
+#include <any>
+#include <map>
 
 template <typename T>
 class Single
@@ -39,29 +44,38 @@ class A final : public Single<A>
     }
 };
 
-template <typename T>
 class Base
 {
   public:
-    void show()
+    virtual void show() = 0;
+    virtual ~Base() = default;
+};
+
+template <typename T>
+class Fruit_Base : public Base
+{
+  public:
+    void show() override
     {
-        static_cast<T*>(this)->show();
+        static_cast<T*>(this)->impl_show();
     }
 };
 
-class Derived_apple : public Base<Derived_apple>
+class Derived_apple : public Fruit_Base<Derived_apple>
 {
-    friend class Base<Derived_apple>;
-    void show()
+  public:
+    friend class Fruit_Base<Derived_apple>;
+    void impl_show()
     {
         std::cout << "Derived_apple" << std::endl;
     }
 };
 
-class Derived_banana : public Base<Derived_banana>
+class Derived_banana : public Fruit_Base<Derived_banana>
 {
-    friend class Base<Derived_banana>;
-    void show()
+  public:
+    friend class Fruit_Base<Derived_banana>;
+    void impl_show()
     {
         std::cout << "Derived_banana" << std::endl;
     }
@@ -70,7 +84,7 @@ class Derived_banana : public Base<Derived_banana>
 template <typename T>
 void show(T& obj)
 {
-    static_cast<Base<T>*>(&obj)->show();
+    static_cast<Fruit_Base<T>*>(&obj)->show();
 }
 
 int main()
@@ -92,7 +106,24 @@ int main()
     {
         Derived_apple apple;
         Derived_banana banana;
-        show(apple);
-        show(banana);
+        // show(apple);
+        // show(banana);
+
+        // Base* p = &apple;
+        // p->show();
+
+        // p = &banana;
+        // p->show();
+    }
+    {
+        Derived_apple apple;
+        Derived_banana banana;
+
+        std::unordered_map<std::string, std::variant<Derived_apple, Derived_banana>> m;
+        m["apple"] = apple;
+        m["banana"] = banana;
+
+        std::visit([](auto&& v) { v.impl_show(); }, m["apple"]);
+        std::visit([](auto&& v) { v.impl_show(); }, m["banana"]);
     }
 }
