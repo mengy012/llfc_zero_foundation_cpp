@@ -43,48 +43,57 @@ class Logger
 
     Logger()
     {
-        output_thread_ = std::thread([this]()
+        if (write_into_file_)
         {
-            std::ostream* os = &std::cout;
-            std::ofstream ofs(out_file_path_, std::ios::app);
-            if (write_into_file_)
+            ofs = std::ofstream(out_file_path_, std::ios::app);
+            os = &ofs;
+        }
+
+        if constexpr (!used_sync_mode)
+        {
+            output_thread_ = std::thread([this]()
             {
-                os = &ofs;
-            }
-            while (true)
-            {
-
-                std::queue<std::string> pending;
-                bool should_exit = false;
-
-                {
-                    std::unique_lock<std::mutex> locked(mtx_);
-                    cv_.wait(locked, [this]() { return !msg_queue_.empty() || exit_flag_; });
-                    pending.swap(msg_queue_);
-                    should_exit = exit_flag_;
-                }
-                while (!pending.empty())
+                while (true)
                 {
 
-                    *os << pending.front();
-                    pending.pop();
+                    std::queue<std::string> pending;
+                    bool should_exit = false;
+
+                    {
+                        std::unique_lock<std::mutex> locked(mtx_);
+                        cv_.wait(locked, [this]() { return !msg_queue_.empty() || exit_flag_; });
+                        pending.swap(msg_queue_);
+                        should_exit = exit_flag_;
+                    }
+                    while (!pending.empty())
+                    {
+
+                        *os << pending.front();
+                        pending.pop();
+                    }
+                    os->flush();
+                    if (should_exit)
+                    {
+                        return;
+                    }
                 }
-                os->flush();
-                if (should_exit)
-                {
-                    return;
-                }
-            }
-        });
+            });
+        }
     }
     ~Logger()
     {
+        if constexpr (!used_sync_mode)
         {
-            std::scoped_lock locked(mtx_);
-            exit_flag_ = true;
+            {
+                std::scoped_lock locked(mtx_);
+                exit_flag_ = true;
+            }
+            cv_.notify_all();
+            if (output_thread_.joinable())
+            {
+                output_thread_.join();
+            }
         }
-        cv_.notify_all();
-        output_thread_.join();
     }
 
     std::string get_current_time()
@@ -97,9 +106,12 @@ class Logger
         return time_str;
     }
 
+    static constexpr bool used_sync_mode{true};
     bool exit_flag_{false};
     bool write_into_file_{false};
     fs::path out_file_path_{"./log.txt"};
+    std::ostream* os{&std::cout};
+    std::ofstream ofs;
     std::thread output_thread_;
     std::mutex mtx_;
     std::condition_variable cv_;
@@ -156,12 +168,19 @@ class Logger
         // std::cout << msg << std::endl;
 
         msg += '\n';
-
+        if constexpr (!used_sync_mode)
         {
-            std::scoped_lock<std::mutex> locked(mtx_);
-            msg_queue_.push(std::move(msg));
+            {
+                std::scoped_lock<std::mutex> locked(mtx_);
+                msg_queue_.push(std::move(msg));
+            }
+            cv_.notify_one();
         }
-        cv_.notify_one();
+        else
+        {
+            std::scoped_lock locked(mtx_);
+            *os << msg << std::flush;
+        }
     }
 };
 
