@@ -43,48 +43,57 @@ class Logger
 
     Logger()
     {
-        output_thread_ = std::thread([this]()
+        if (write_into_file_)
         {
-            std::ostream* os = &std::cout;
-            std::ofstream ofs(out_file_path_, std::ios::app);
-            if (write_into_file_)
+            ofs = std::ofstream(out_file_path_, std::ios::app);
+            os = &ofs;
+        }
+
+        if constexpr (!used_sync_mode)
+        {
+            output_thread_ = std::thread([this]()
             {
-                os = &ofs;
-            }
-            while (true)
-            {
-
-                std::queue<std::string> pending;
-                bool should_exit = false;
-
-                {
-                    std::unique_lock<std::mutex> locked(mtx_);
-                    cv_.wait(locked, [this]() { return !msg_queue_.empty() || exit_flag_; });
-                    pending.swap(msg_queue_);
-                    should_exit = exit_flag_;
-                }
-                while (!pending.empty())
+                while (true)
                 {
 
-                    *os << pending.front();
-                    pending.pop();
+                    std::queue<std::string> pending;
+                    bool should_exit = false;
+
+                    {
+                        std::unique_lock<std::mutex> locked(mtx_);
+                        cv_.wait(locked, [this]() { return !msg_queue_.empty() || exit_flag_; });
+                        pending.swap(msg_queue_);
+                        should_exit = exit_flag_;
+                    }
+                    while (!pending.empty())
+                    {
+
+                        *os << pending.front();
+                        pending.pop();
+                    }
+                    os->flush();
+                    if (should_exit)
+                    {
+                        return;
+                    }
                 }
-                os->flush();
-                if (should_exit)
-                {
-                    return;
-                }
-            }
-        });
+            });
+        }
     }
     ~Logger()
     {
+        if constexpr (!used_sync_mode)
         {
-            std::scoped_lock locked(mtx_);
-            exit_flag_ = true;
+            {
+                std::scoped_lock locked(mtx_);
+                exit_flag_ = true;
+            }
+            cv_.notify_all();
+            if (output_thread_.joinable())
+            {
+                output_thread_.join();
+            }
         }
-        cv_.notify_all();
-        output_thread_.join();
     }
 
     std::string get_current_time()
@@ -97,9 +106,12 @@ class Logger
         return time_str;
     }
 
+    static constexpr bool used_sync_mode{true};
     bool exit_flag_{false};
     bool write_into_file_{false};
     fs::path out_file_path_{"./log.txt"};
+    std::ostream* os{&std::cout};
+    std::ofstream ofs;
     std::thread output_thread_;
     std::mutex mtx_;
     std::condition_variable cv_;
@@ -123,7 +135,7 @@ class Logger
                 msg.insert(0, fmt::format(fmt::emphasis::bold | fg(fmt::color::green), "{} ", "[INFO]"));
                 break;
             case Log_level::ERROR:
-                msg.insert(0, fmt::format(fmt::emphasis::bold | fg(fmt::color::red), "{} ", "[ERROR]"));
+                msg.insert(0, fmt::format(fmt::emphasis::bold | fg(fmt::color::white_smoke) | bg(fmt::color::red), "{} ", "[ERROR]"));
                 break;
 
             default:
@@ -156,17 +168,34 @@ class Logger
         // std::cout << msg << std::endl;
 
         msg += '\n';
-
+        if constexpr (!used_sync_mode)
         {
-            std::scoped_lock<std::mutex> locked(mtx_);
-            msg_queue_.push(std::move(msg));
+            {
+                std::scoped_lock<std::mutex> locked(mtx_);
+                msg_queue_.push(std::move(msg));
+            }
+            cv_.notify_one();
         }
-        cv_.notify_one();
+        else
+        {
+            std::scoped_lock locked(mtx_);
+            *os << msg << std::flush;
+        }
     }
 };
 
-#define logger Logger::logger
-
-#define DEBUG(fmt_str, ...) logger.log(Log_level::DEBUG, fmt_str __VA_OPT__(,) __VA_ARGS__)
-#define INFO(fmt_str, ...) logger.log(Log_level::INFO, fmt_str __VA_OPT__(,)__VA_ARGS__)
-#define ERROR(fmt_str, ...) logger.log(Log_level::ERROR,fmt_str __VA_OPT__(,) __VA_ARGS__)
+template <typename... Args>
+void DEBUG(fmt::format_string<Args...> format_str, Args&&... args)
+{
+    Logger::logger.log(Log_level::DEBUG, format_str, std::forward<Args>(args)...);
+}
+template <typename... Args>
+void INFO(fmt::format_string<Args...> format_str, Args&&... args)
+{
+    Logger::logger.log(Log_level::INFO, format_str, std::forward<Args>(args)...);
+}
+template <typename... Args>
+void ERROR(fmt::format_string<Args...> format_str, Args&&... args)
+{
+    Logger::logger.log(Log_level::ERROR, format_str, std::forward<Args>(args)...);
+}

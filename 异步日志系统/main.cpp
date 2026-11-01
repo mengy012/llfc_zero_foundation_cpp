@@ -1,6 +1,7 @@
 #include "rsync_log.h"
 #include <iostream>
 #include <random>
+#include <cassert>
 
 int main()
 {
@@ -26,4 +27,8 @@ int main()
             ERROR("test {}", 3);
         }
     }
+
+    char arr[10] = "hello";
+    char (&ref)[10] = arr;
+    assert(arr[0] == ref[0]);
 }
